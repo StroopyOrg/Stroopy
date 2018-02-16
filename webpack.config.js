@@ -71,12 +71,16 @@ module.exports = {
       minify: {
         removeComments: true
       }
+    }),
+    new webpack.ProvidePlugin({
+      '$': 'jquery',
+      'jQuery': 'jquery',
     })
   ],
   resolve: {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      jquery: "jquery/jquery.js"
+      jquery: "jquery/dist/jquery.js"
     },
     extensions: ['*', '.js', '.vue', '.json']
   },
