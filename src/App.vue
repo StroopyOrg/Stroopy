@@ -51,11 +51,11 @@
                   <span class="input-group-addon">
                     <i class="now-ui-icons objects_spaceship" style="font-size: 20pt;"></i>
                   </span>
-                  <input class="form-control" placeholder="Secret Key" type="text" style="font-size: 20pt;">
+                  <input name="key" id="key" v-model="key" class="form-control" placeholder="Secret Key" type="text" style="font-size: 20pt;">
                 </div>
               </div>
               <div class="footer text-center">
-                <a href="#" class="btn btn-primary btn-round btn-lg btn-block" style="font-size: 20pt;">Login</a>
+                <a v-on:click="login" href="" class="btn btn-primary btn-round btn-lg btn-block" style="font-size: 20pt;">Login</a>
               </div>
               <div class="pull-right">
                 <h6>
@@ -93,13 +93,22 @@
 </template>
 
 <script>
+import Router from 'vue-router';
 import Wallet from './components/Wallet';
 export default {
   name: 'app',
   data () {
     return {
       githubaccount: 'StroopyOrg',
-      fullyear: new Date().getFullYear()
+      fullyear: new Date().getFullYear(),
+      key: ''
+    }
+  },
+  methods: {
+    login: function (event) {
+        
+      //console.log(this.key);
+      this.$router.push('/wallet');
     }
   },
   components: {

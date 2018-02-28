@@ -4783,11 +4783,6 @@
         "sort-keys": "1.1.2"
       }
     },
-    "now-ui-kit": {
-      "version": "1.1.0",
-      "resolved": "https://registry.npmjs.org/now-ui-kit/-/now-ui-kit-1.1.0.tgz",
-      "integrity": "sha512-7RxIbhcMuLnX2Aa4iOzvfM5u2IdmQzwk0KzxsWgU/ooG9U8x1+bIf/JvOeMcAmSXEzRypVA2gTE16vEDvrUhZQ=="
-    },
     "npm-run-path": {
       "version": "2.0.2",
       "resolved": "https://registry.npmjs.org/npm-run-path/-/npm-run-path-2.0.2.tgz",
