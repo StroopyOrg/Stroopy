@@ -55,7 +55,7 @@
                 </div>
               </div>
               <div class="footer text-center">
-                <a v-on:click="login" href="" class="btn btn-primary btn-round btn-lg btn-block" style="font-size: 20pt;">Login</a>
+                <a v-on:click="login" href="#" class="btn btn-primary btn-round btn-lg btn-block" style="font-size: 20pt;">Login</a>
               </div>
               <div class="pull-right">
                 <h6>
@@ -95,6 +95,9 @@
 <script>
 import Router from 'vue-router';
 import Wallet from './components/Wallet';
+
+const StellarSdk = require('stellar-sdk');
+  
 export default {
   name: 'app',
   data () {
@@ -106,9 +109,14 @@ export default {
   },
   methods: {
     login: function (event) {
-        
-      //console.log(this.key);
-      this.$router.push('/wallet');
+    
+      try {
+        var sourceKeypair = StellarSdk.Keypair.fromSecret(this.key);
+        this.$root.sourceKeypair = sourceKeypair;
+        this.$router.push('/wallet');
+      } catch (e) {
+        if (event) event.preventDefault();
+      }
     }
   },
   components: {

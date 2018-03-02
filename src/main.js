@@ -14,7 +14,7 @@ import './assets/js/now-ui-kit.js';
 Vue.use(Router);
 
 const routes = [
-  {path: '/', component: App, meta: { title: 'Stroopy | Steller Wallet For Everyone'}},
+  {path: '/', component: App, meta: { title: 'Stroopy | Stellar Wallet For Everyone'}},
   {path: '/wallet', component: Wallet, meta: { title: 'Stroopy | Wallet'}}
 ];
 
@@ -32,5 +32,8 @@ router.beforeEach((to, from, next) => {
 
 new Vue({
   el: '#app',
-  router
+  router,
+  data: {
+    sourceKeypair: {}
+  }
 });

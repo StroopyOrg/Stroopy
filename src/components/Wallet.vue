@@ -22,22 +22,11 @@
               
               <div class="collapse show" id="assetslist">
                 <ul class="nav">
-                  <li>
+                  <li v-for="asset in assets">
                     <a href="#">
-                      <span class="sidebar-mini-icon">XLM</span>
-                      <span class="sidebar-normal">Stellar Lumens</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <span class="sidebar-mini-icon">CNY</span>
-                      <span class="sidebar-normal">Chinese Yuan</span>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <span class="sidebar-mini-icon">MOBI</span>
-                      <span class="sidebar-normal">Mobius</span>
+                      <span v-if="asset.asset_type === 'native'" class="sidebar-mini-icon">XLM</span>
+                      <span v-else class="sidebar-mini-icon">{{ asset.asset_code }}</span>
+                      <span class="sidebar-normal">{{ asset.balance }}</span>
                     </a>
                   </li>
                 </ul>
@@ -99,13 +88,51 @@
             <div class="col-md-12">
               <div class="card">
                 <div class="card-header">
+                
+                
+                  <!-- Temporary Modal -->
+                  <div class="modal fade" id="sendModal">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" style="margin: 0px;">Send Money</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                          Coming Soon...
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal fade" id="receiveModal">
+                    <div class="modal-dialog modal-sm">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" style="margin: 0px;">Receive Money</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                          Coming Soon...
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- End Temporary Modal -->
+                  
+                  
                   <h4 class="card-title" style="margin-top: 5px;margin-bottom: 5px;">Transactions</h4>
                   <div style="min-width: 230px;">
-                    <button class="btn btn-primary btn-round btn-lg">
+                    <button class="btn btn-primary btn-round btn-lg" data-toggle="modal" data-target="#sendModal">
                       <i class="now-ui-icons arrows-1_minimal-up"></i>
                       Send
                     </button>
-                    <button class="btn btn-primary btn-round btn-lg pull-right">
+                    <button class="btn btn-primary btn-round btn-lg pull-right" data-toggle="modal" data-target="#receiveModal">
                       <i class="now-ui-icons arrows-1_minimal-down"></i>
                       Receive
                     </button>
@@ -115,11 +142,13 @@
                   <div class="table-responsive">
                     <table class="table table-shopping">
                       <tbody>
-                        <tr>
-                          <td class="td-name" style="line-height: 1;">
-                            <a href="#" class="asset-amount">AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</a>
-                            <span class="asset-received pull-right">0.00000001</span>
-                            <small class="asset-date">January 01, 2018</small>
+                        <tr v-for="payment in payments">
+                          <td v-if="payment.type === 'payment'" class="td-name" style="line-height: 1;">
+                            <a v-if="payment.to === $root.$data.sourceKeypair.publicKey()" href="#" class="asset-amount">{{ payment.from }} </a>
+                            <a v-else href="#" class="asset-amount">{{ payment.to }} </a>
+                            <span v-if="payment.asset_type === 'native'" v-bind:class="[ payment.to === $root.$data.sourceKeypair.publicKey() ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} XLM</span>
+                            <span v-else v-bind:class="[ payment.to === $root.$data.sourceKeypair.publicKey() ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} {{ payment.asset_code }}</span>
+                            <small class="asset-date">{{ payment.created_at }}</small>
                           </td>
                         </tr>
                       </tbody>
@@ -134,5 +163,53 @@
     </div>
 </template>
 
-<script src="../assets/js/now-ui-dashboard.min.js"></script>
+<script>
+import '../assets/js/now-ui-dashboard.min.js';
+
+const StellarSdk = require('stellar-sdk');
+
+export default {
+  data () {
+    return {
+      assets: [],
+      payments: []
+    }
+  },
+  mounted: function () {
+    
+    this.$nextTick(function () {
+      if(jQuery.isEmptyObject(this.$root.$data.sourceKeypair)){
+        window.location.href = "/";
+        return false;
+      }
+      
+      //var server = new StellarSdk.Server('https://horizon.stellar.org');
+      //StellarSdk.Network.usePublicNetwork();
+      var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+      StellarSdk.Network.useTestNetwork();
+      
+      var sourcePublicKey = this.$root.$data.sourceKeypair.publicKey();
+      server.loadAccount(sourcePublicKey).then((account) => {
+        this.$set(this.$data, 'assets', account.balances );
+      }).catch(function(e) {
+        window.location.href = "/";
+        return false;
+      });
+      
+      server.payments()
+      .forAccount(sourcePublicKey)
+      .limit(50)
+      .order('desc')
+      .call()
+      .then((page) => {
+        this.$set(this.$data, 'payments', page.records );
+      })
+      .catch(function (err) {
+          console.log(err);
+      });
+    })
+  }
+}
+</script>
+
 <style src="../assets/css/now-ui-dashboard.min.css">
