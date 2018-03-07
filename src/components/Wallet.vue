@@ -11,13 +11,14 @@
                   <i class="now-ui-icons design_bullet-list-67 visible-on-sidebar-mini"></i>
               </button>
             </div>
+            
         </div>
         <div class="sidebar-wrapper">
           <ul class="nav">
             <li>
               <a data-toggle="collapse" href="#assetslist" class="" aria-expanded="true">
                 <i class="now-ui-icons business_money-coins"></i>
-                <p>Assets<b class="caret"></b></p>
+                <p>My Assets<b class="caret"></b></p>
               </a>
               
               <div class="collapse show" id="assetslist">
@@ -49,6 +50,7 @@
               </div>
               <a class="navbar-brand" href="#" style="font-weight: 600;">Stroopy</a>
             </div>
+            
             <button class="navbar-toggler-custom collapsed" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-bar navbar-kebab"></span>
               <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -56,6 +58,7 @@
             </button>
             
             <div class="navbar-collapse justify-content-end collapse" id="navigation">
+              <!--
               <form>
                   <div class="input-group no-border">
                       <input value="" class="form-control" placeholder="Search..." type="text">
@@ -64,6 +67,7 @@
                       </span>
                   </div>
               </form>
+              -->
               <ul class="navbar-nav">
 				<li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -76,11 +80,14 @@
                 </li>
               </ul>
             </div>
+            
           </div>
         </nav>
         <div class="panel-header" style="height: 165px;background: #2479A2;background: linear-gradient(90deg,#2479A2 0,#2479A2 60%,#2479A2);">
           <div class="header text-center">
-            <h3 class="title">0.00000001 XLM</h3>
+            <h3 class="title">
+              {{ assets[0].balance }} <span v-if="assets[0].asset_type === 'native'">XLM</span><span v-else>{{ assets[0].asset_code }}</span>
+            </h3>
           </div>
         </div>
         <div class="content">
@@ -144,10 +151,10 @@
                       <tbody>
                         <tr v-for="payment in payments">
                           <td v-if="payment.type === 'payment'" class="td-name" style="line-height: 1;">
-                            <a v-if="payment.to === $root.$data.sourceKeypair.publicKey()" href="#" class="asset-amount">{{ payment.from }} </a>
+                            <a v-if="payment.to === sourcePublicKey" href="#" class="asset-amount">{{ payment.from }} </a>
                             <a v-else href="#" class="asset-amount">{{ payment.to }} </a>
-                            <span v-if="payment.asset_type === 'native'" v-bind:class="[ payment.to === $root.$data.sourceKeypair.publicKey() ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} XLM</span>
-                            <span v-else v-bind:class="[ payment.to === $root.$data.sourceKeypair.publicKey() ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} {{ payment.asset_code }}</span>
+                            <span v-if="payment.asset_type === 'native'" v-bind:class="[ payment.to === sourcePublicKey ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} XLM</span>
+                            <span v-else v-bind:class="[ payment.to === sourcePublicKey ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} {{ payment.asset_code }}</span>
                             <small class="asset-date">{{ payment.created_at }}</small>
                           </td>
                         </tr>
@@ -171,24 +178,27 @@ const StellarSdk = require('stellar-sdk');
 export default {
   data () {
     return {
-      assets: [],
+      assets: [''],
       payments: []
     }
   },
   mounted: function () {
     
     this.$nextTick(function () {
-      if(jQuery.isEmptyObject(this.$root.$data.sourceKeypair)){
+      var sourcePublicKey = sessionStorage.sourcePublicKey;
+      if(!sourcePublicKey){
         window.location.href = "/";
         return false;
       }
       
-      //var server = new StellarSdk.Server('https://horizon.stellar.org');
-      //StellarSdk.Network.usePublicNetwork();
-      var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
-      StellarSdk.Network.useTestNetwork();
+      if(ENV == 'development'){
+        var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+        StellarSdk.Network.useTestNetwork();
+      }else if(ENV == 'production'){
+        var server = new StellarSdk.Server('https://horizon.stellar.org');
+        StellarSdk.Network.usePublicNetwork();
+      }
       
-      var sourcePublicKey = this.$root.$data.sourceKeypair.publicKey();
       server.loadAccount(sourcePublicKey).then((account) => {
         this.$set(this.$data, 'assets', account.balances );
       }).catch(function(e) {
@@ -212,4 +222,116 @@ export default {
 }
 </script>
 
-<style src="../assets/css/now-ui-dashboard.min.css">
+<style src="../assets/css/now-ui-dashboard.min.css"></style>
+<style>
+
+.asset-received {
+    background-color: rgb(0, 166, 90) !important;
+    color: rgb(255, 255, 255) !important;
+    font-size: 13px;
+    padding: 0.2em 0.6em 0.3em;
+    line-height: 1;
+    border-radius: 0.25em;
+    font-weight: 600;
+}
+
+.asset-sent {
+    background-color: rgb(212, 79, 50) !important;
+    color: rgb(255, 255, 255) !important;
+    font-size: 13px;
+    padding: 0.2em 0.6em 0.3em;
+    line-height: 1;
+    border-radius: 0.25em;
+    font-weight: 600;
+}
+
+.asset-amount{
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 245px;
+  display: inline-block;
+  font-size: 13px;
+  color: #0D90C3CC;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.asset-date{
+  font-weight: 400;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.navbar, .navbar > .container, .navbar > .container-fluid {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+.navbar .navbar-wrapper {
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-align-items: center;
+}
+
+.navbar, .navbar > .container, .navbar > .container-fluid {
+  -webkit-justify-content: space-between !important;
+  -webkit-align-items: center;
+}
+
+.navbar > .container, .navbar > .container-fluid {
+  -ms-flex-wrap: wrap;
+  -webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  -ms-flex-align: center;
+  -webkit-box-pack: justify;
+  -moz-box-pack: justify;
+  -ms-flex-pack: justify;
+}
+
+.navbar .navbar-toggler-custom {
+  padding: .25rem .75rem;
+  font-size: 1.25rem;
+  line-height: 1;
+  background: 0 0;
+  border: 1px solid transparent;
+  border-radius: .25rem;
+  
+  width: 37px;
+  height: 27px;
+  vertical-align: middle;
+  outline: 0;
+  cursor: pointer;
+}
+
+.navbar .navbar-toggler-custom .navbar-toggler-bar.navbar-kebab {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.navbar .navbar-toggler-bar + .navbar-toggler-bar.navbar-kebab {
+  margin-top: 3px;
+}
+
+.off-canvas-sidebar .nav li > a, .sidebar .nav li > a {
+  cursor: text;
+}
+
+@media screen and (max-width: 768px) {
+  h3.title{
+    font-size: 1.7em;
+  }
+}
+
+</style>

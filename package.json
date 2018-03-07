@@ -1,6 +1,6 @@
 {
   "name": "Stroopy",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "author": "Stroopy Organization",
   "homepage": "https://www.stroopy.org",
   "license": "Apache License 2.0",
@@ -11,7 +11,7 @@
     "shrink": "rm -rf npm-shrinkwrap.json && npm prune && npm shrinkwrap --dev"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
+    "babel-polyfill": "6.26.0",
     "bootstrap": "4.0.0-beta.2",
     "font-awesome": "4.7.0",
     "html-webpack-plugin": "2.30.1",
