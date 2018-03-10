@@ -18,12 +18,6 @@
               <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Create Account</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Security</a>
-            </li>
-            <li class="nav-item">
               <a class="nav-link" rel="tooltip" title="" data-placement="bottom" target="_blank" data-original-title="Open Source Project" v-bind:href="'https://github.com/'+ githubaccount">
                 <i class="fa fa-github"></i>
                 <p class="d-lg-none d-xl-none">Github</p>
@@ -51,7 +45,7 @@
                   <span class="input-group-addon">
                     <i class="now-ui-icons objects_spaceship" style="font-size: 20pt;"></i>
                   </span>
-                  <input name="key" id="key" v-model="key" class="form-control" placeholder="Secret Key" type="text" style="font-size: 20pt;">
+                  <input name="key" id="key" v-model="key" class="form-control" placeholder="Public Key" type="text" style="font-size: 20pt;">
                 </div>
               </div>
               <div class="footer text-center">
@@ -59,7 +53,7 @@
               </div>
               <div class="pull-right">
                 <h6>
-                  <span style="font-size:10px;">Don't Worry. Your Secret Key will never be sent or stored anywhere.</span>
+                  <span style="font-size:10px;">Login safely using only your public key. No need to enter your private key.</span>
                 </h6>
               </div>
             </form>
@@ -71,8 +65,8 @@
           <div class="container">
             <nav>
               <ul>
-                <li><a href="https://stellar.org/">Stellar.org</a></li>
-                <li><a href="#">Apache License 2.0</a></li>
+                <li><a href="https://stellar.org/" target="_blank">Stellar.org</a></li>
+                <li><a href="https://github.com/StroopyOrg/Stroopy/blob/master/LICENSE" target="_blank">Apache License 2.0</a></li>
               </ul>
             </nav>
             <div class="copyright">
@@ -82,7 +76,7 @@
                 Made with
                 <i class="fa fa-heart" style="color:#f96332;"></i>
                 by
-                <a v-bind:href="'https://github.com/'+ githubaccount"><b>{{githubaccount}}</b></a>
+                <a v-bind:href="'https://github.com/'+ githubaccount" target="_blank"><b>{{githubaccount}}</b></a>
               </span>
             </div>
           </div>
@@ -110,7 +104,7 @@ export default {
     login: function (event) {
     
       try {
-        var sourceKeypair = StellarSdk.Keypair.fromSecret(this.key);
+        var sourceKeypair = StellarSdk.Keypair.fromPublicKey(this.key);
         sessionStorage.setItem('sourcePublicKey', sourceKeypair.publicKey());
         window.location.href = "/wallet";
       } catch (e) {

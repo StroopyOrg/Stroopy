@@ -72,10 +72,10 @@
 				<li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="now-ui-icons users_single-02"></i>
-                    <p><span class="d-lg-none d-md-block">Settings</span></p>
+                    <p><span class="d-lg-none d-md-block">User</span></p>
                   </a>
                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="#">Wallet Settings</a>
+                    <a v-on:click="logout" class="dropdown-item" href="#">Logout</a>
                   </div>
                 </li>
               </ul>
@@ -96,8 +96,6 @@
               <div class="card">
                 <div class="card-header">
                 
-                
-                  <!-- Temporary Modal -->
                   <div class="modal fade" id="sendModal">
                     <div class="modal-dialog modal-sm">
                       <div class="modal-content">
@@ -106,31 +104,48 @@
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
-                          Coming Soon...
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                          <div id="sendError" class="alert alert-danger" role="alert" style="display:none;"></div>
+                          <form>
+                            <div class="form-group">
+                              <label for="destination">Destination</label>
+                              <input v-model="destination" class="form-control" id="destination" placeholder="GASOCNHNNLYFNMDJYQ3XFMI7BYHIOCFW3GJEOWRPEGK2TDPGTG2E5EDW" type="text">
+                            </div>
+                            <div class="form-group">
+                              <label for="amount">Amount</label>
+                              <input v-model="amount" class="form-control" id="amount" placeholder="10" type="text">
+                            </div>
+                            <div class="form-group">
+                              <label for="asset">Asset</label>
+                              <select v-model="asset" class="form-control" id="asset">
+                                <option v-for="(asset,index) in assets" v-if="asset.asset_type === 'native'" :value="index">XLM</option>
+                                <option v-else>{{ asset.asset_code }}</option>
+                              </select>
+                            </div>
+                            <div class="form-group">
+                              <label for="secretkey">Secret Key</label>
+                              <input v-model="secretkey" class="form-control" id="secretkey" placeholder="SAKRB7EE6H23EF733WFU76RPIYOPEWVOMBBUXDQYQ3OF4NF6ZY6B6VLW" type="text">
+                            </div>
+                            <button v-on:click="send" type="submit" class="btn btn-primary">Send</button>
+                          </form>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div class="modal fade" id="receiveModal">
-                    <div class="modal-dialog modal-sm">
+                    <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
                           <h4 class="modal-title" style="margin: 0px;">Receive Money</h4>
                           <button type="button" class="close" data-dismiss="modal">&times;</button>
                         </div>
                         <div class="modal-body">
-                          Coming Soon...
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                          <img id="address_qr" style="width: 100%;" src="" alt="public address">
+                          <b>My Address: </b>
+                          <span id="address" class="badge badge-pill badge-default" style="font-size: 11px; width: 100%; font-weight: 600; white-space: initial;"></span>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <!-- End Temporary Modal -->
                   
                   
                   <h4 class="card-title" style="margin-top: 5px;margin-bottom: 5px;">Transactions</h4>
@@ -178,14 +193,105 @@ const StellarSdk = require('stellar-sdk');
 export default {
   data () {
     return {
+      server: '',
       assets: [''],
-      payments: []
+      payments: [],
+      sourcePublicKey: '',
+      destination: '',
+      amount: '',
+      asset: '0',
+      secretkey: '',
+    }
+  },
+  methods: {
+    logout: function (event) {
+      sessionStorage.removeItem('sourcePublicKey');
+      window.location.href = "/";
+    },
+    send: function (event) {
+    
+      try {
+        jquery('#sendModal .btn').prop('disabled', true);
+        if(this.assets[this.asset].asset_type == 'native'){
+          var sendAsset = new StellarSdk.Asset('XLM');
+        }else{
+          var sendAsset = new StellarSdk.Asset(this.assets[this.asset].asset_code, this.assets[this.asset].asset_issuer);
+        }
+        
+        this.server.loadAccount(this.sourcePublicKey)
+        .then((account) => {
+          var transaction = new StellarSdk.TransactionBuilder(account)
+          .addOperation(StellarSdk.Operation.payment({
+            destination: this.destination,
+            asset: sendAsset,
+            amount: String(this.amount)
+          }))
+          .build();
+          
+          var sourceKeypair = StellarSdk.Keypair.fromSecret(String(this.secretkey));
+          transaction.sign(sourceKeypair);
+          
+          return this.server.submitTransaction(transaction)
+          .then((transactionResult) => {
+            this.loadAccountDetails();
+            jquery("#sendError").text('');
+            jquery("#sendError").hide()
+            jquery('#sendModal').modal('hide');
+            return jquery('#sendModal .btn').prop('disabled', false);
+          })
+          .catch(function(e) {
+            jquery("#sendError").text(e.message);
+            jquery("#sendError").show()
+            return jquery('#sendModal .btn').prop('disabled', false);
+          });
+        })
+        .catch(function(e) {
+          jquery("#sendError").text(e.message);
+          jquery("#sendError").show()
+          return jquery('#sendModal .btn').prop('disabled', false);
+        });
+      } catch (e) {
+        jquery("#sendError").text(e.message);
+        jquery("#sendError").show()
+        return jquery('#sendModal .btn').prop('disabled', false);
+      }
+      
+      if (event) event.preventDefault();
+    },
+    loadAccountDetails: function(){
+    
+      return this.server.loadAccount(this.sourcePublicKey).then((account) => {
+        this.$set(this.$data, 'assets', account.balances );
+      }).then(() => {
+      
+          return this.server.payments()
+      .forAccount(this.sourcePublicKey)
+      .limit(50)
+      .order('desc')
+      .call()
+      .then((page) => {
+         this.$set(this.$data, 'payments', page.records );
+      })
+      .catch(function (err) {
+          console.log(err);
+      });
+      
+      
+      })
+      .catch(function(e) {
+        window.location.href = "/";
+        return false;
+      });
+      
+      
+      
     }
   },
   mounted: function () {
     
     this.$nextTick(function () {
       var sourcePublicKey = sessionStorage.sourcePublicKey;
+      this.sourcePublicKey = sourcePublicKey;
       if(!sourcePublicKey){
         window.location.href = "/";
         return false;
@@ -199,24 +305,11 @@ export default {
         StellarSdk.Network.usePublicNetwork();
       }
       
-      server.loadAccount(sourcePublicKey).then((account) => {
-        this.$set(this.$data, 'assets', account.balances );
-      }).catch(function(e) {
-        window.location.href = "/";
-        return false;
-      });
+      this.server = server;
+      this.loadAccountDetails();
       
-      server.payments()
-      .forAccount(sourcePublicKey)
-      .limit(50)
-      .order('desc')
-      .call()
-      .then((page) => {
-        this.$set(this.$data, 'payments', page.records );
-      })
-      .catch(function (err) {
-          console.log(err);
-      });
+      jquery("#receiveModal #address").text(sourcePublicKey);
+      jquery("#receiveModal #address_qr").attr('src','https://api.qrserver.com/v1/create-qr-code/?size=452x452&data=' + sourcePublicKey);
     })
   }
 }
@@ -333,5 +426,30 @@ export default {
     font-size: 1.7em;
   }
 }
+
+.form-control{
+  border-radius: 0px;
+}
+
+.form-control::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color:#bbbbbb;
+}
+.form-control:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color:#bbbbbb;
+}
+.form-control::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color:#bbbbbb;
+}
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color:#bbbbbb;
+}
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+   color:#bbbbbb;
+}
+
+.form-control::placeholder { /* Most modern browsers support this now. */
+   color:#bbbbbb;
+}
+
 
 </style>
