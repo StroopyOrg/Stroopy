@@ -87,10 +87,7 @@
 </template>
 
 <script>
-import Wallet from './components/Wallet';
-
 const StellarSdk = require('stellar-sdk');
-  
 export default {
   name: 'app',
   data () {
@@ -111,9 +108,6 @@ export default {
         if (event) event.preventDefault();
       }
     }
-  },
-  components: {
-    Wallet
   }
 }
 </script>
