@@ -5,6 +5,7 @@ import Payments from './components/Payments.vue';
 import Operations from './components/Operations.vue';
 import Offers from './components/Offers.vue';
 import Transactions from './components/Transactions.vue';
+import Security from './components/Security.vue';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import './assets/css/now-ui-kit.css';
@@ -22,7 +23,8 @@ const routes = [
   {path: '/wallet/payments', component: Payments, meta: { title: 'Stroopy | Payments'}},
   {path: '/wallet/operations', component: Operations, meta: { title: 'Stroopy | Operations'}},
   {path: '/wallet/offers', component: Offers, meta: { title: 'Stroopy | Offers'}},
-  {path: '/wallet/transactions', component: Transactions, meta: { title: 'Stroopy | Transactions'}}
+  {path: '/wallet/transactions', component: Transactions, meta: { title: 'Stroopy | Transactions'}},
+  {path: '/security', component: Security, meta: { title: 'Stroopy | Security'}}
 ];
 
 const router = new Router({
@@ -33,6 +35,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title;
   if(to.path == '/') document.body.className = 'login-page sidebar-collapse';
+  else if(to.path == '/security') document.body.className = 'landing-page sidebar-collapse';
   else document.body.className = 'sidebar-mini';
   next();
 });

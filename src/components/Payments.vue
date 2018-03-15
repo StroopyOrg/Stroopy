@@ -118,8 +118,7 @@
         destination: '',
         amount: '',
         asset: '0',
-        secretkey: '',
-        page:''
+        secretkey: ''
       }
     },
     methods: {

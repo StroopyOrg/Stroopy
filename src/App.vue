@@ -18,6 +18,9 @@
               <a class="nav-link" href="/">Home</a>
             </li>
             <li class="nav-item">
+              <a class="nav-link" href="/security">Security</a>
+            </li>
+            <li class="nav-item">
               <a class="nav-link" rel="tooltip" title="" data-placement="bottom" target="_blank" data-original-title="Open Source Project" v-bind:href="'https://github.com/'+ githubaccount">
                 <i class="fa fa-github"></i>
                 <p class="d-lg-none d-xl-none">Github</p>
