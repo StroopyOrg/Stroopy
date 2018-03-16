@@ -192,6 +192,17 @@ export default {
     background-position: center bottom;
   }
   
+  .page-header .container>.content-center {
+    position: relative;
+  }
+  
+  .navbar-translate {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    -webkit-justify-content: space-between !important;
+    -webkit-align-items: center;
+  }
+
   @media screen and (max-width: 768px) {
     .image-container.image-left {
         margin-bottom: 0px;
