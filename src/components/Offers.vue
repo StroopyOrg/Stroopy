@@ -17,27 +17,30 @@
               <h4 class="card-title">Offers</h4>
             </div>
             <div class="card-body">
-              <div class="table-responsive" v-if="offers.length > 0">
-                <table class="table">
-                  <thead class=" text-primary">
-                    <tr>
-                      <th>Sell</th>
-                      <th>Buy</th>
-                      <th>Amount</th>
-                      <th>Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(offer,index) in offers">
-                      <td v-if="offer.selling.asset_type === 'native'">XLM</td>
-                      <td v-else>{{offer.selling.asset_code}}</td>
-                      <td v-if="offer.buying.asset_type === 'native'">XLM</td>
-                      <td v-else>{{offer.buying.asset_code}}</td>
-                      <td>{{offer.amount}}</td>
-                      <td>{{offer.price}}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div v-if="records.length > 0">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>Sell</th>
+                        <th>Buy</th>
+                        <th>Amount</th>
+                        <th>Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(offer,index) in records">
+                        <td v-if="offer.selling.asset_type === 'native'">XLM</td>
+                        <td v-else>{{offer.selling.asset_code}}</td>
+                        <td v-if="offer.buying.asset_type === 'native'">XLM</td>
+                        <td v-else>{{offer.buying.asset_code}}</td>
+                        <td>{{offer.amount}}</td>
+                        <td>{{offer.price}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button v-on:click="loadMore" class="btn btn-block btn-primary btn-round btn-simple">More</button>
               </div>
               <div v-else>No Offers Found</div>
             </div>
@@ -54,7 +57,8 @@
   export default {
     data () {
       return {
-        offers: []
+        records: [],
+        page: ''
       }
     },
     components: {
@@ -65,9 +69,10 @@
       this.$nextTick(function () {
         jquery("#offers_menu").addClass("active");
         
-        this.server.offers('accounts', sessionStorage.sourcePublicKey).call()
-        .then((offers) => {
-          this.$set(this.$data, 'offers', offers.records );
+        this.server.offers('accounts', sessionStorage.sourcePublicKey).order("desc").limit(10).call()
+        .then((page) => {
+          this.$set(this.$data, 'records', page.records );
+          this.$set(this.$data, 'page', page );
         })
         .catch(function(e) {
         });

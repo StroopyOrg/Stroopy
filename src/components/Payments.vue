@@ -78,20 +78,24 @@
               </div>
             </div>
             <div class="card-body">
-              <div class="table-responsive" v-if="payments.length > 0">
-                <table class="table table-shopping">
-                  <tbody>
-                    <tr v-for="payment in payments">
-                      <td v-if="payment.type === 'payment'" class="td-name" style="line-height: 1;">
-                        <a v-if="payment.to === sourcePublicKey" v-bind:href="payment._links.self.href" class="asset-amount wallet-link">{{ payment.from }} </a>
-                        <a v-else v-bind:href="payment._links.self.href" class="asset-amount wallet-link">{{ payment.to }} </a>
-                        <span v-if="payment.asset_type === 'native'" v-bind:class="[ payment.to === sourcePublicKey ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} XLM</span>
-                        <span v-else v-bind:class="[ payment.to === sourcePublicKey ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} {{ payment.asset_code }}</span>
-                        <small class="asset-date">{{ payment.created_at }}</small>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table></div>
+              <div v-if="records.length > 0">
+                <div class="table-responsive">
+                  <table class="table table-shopping">
+                    <tbody>
+                      <tr v-for="payment in records">
+                        <td v-if="payment.type === 'payment'" class="td-name" style="line-height: 1;">
+                          <a v-if="payment.to === sourcePublicKey" v-bind:href="payment._links.self.href" class="asset-amount wallet-link">{{ payment.from }} </a>
+                          <a v-else v-bind:href="payment._links.self.href" class="asset-amount wallet-link">{{ payment.to }} </a>
+                          <span v-if="payment.asset_type === 'native'" v-bind:class="[ payment.to === sourcePublicKey ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} XLM</span>
+                          <span v-else v-bind:class="[ payment.to === sourcePublicKey ? 'asset-received' : 'asset-sent', 'pull-right']">{{ payment.amount }} {{ payment.asset_code }}</span>
+                          <small class="asset-date">{{ payment.created_at }}</small>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button v-on:click="loadMore" class="btn btn-block btn-primary btn-round btn-simple">More</button>
+              </div>
               <div v-else>No Payments Found</div>
             </div>
           </div>
@@ -113,12 +117,13 @@
       return {
         server: '',
         assets: [''],
-        payments: [],
+        records: [],
         sourcePublicKey: '',
         destination: '',
         amount: '',
         asset: '0',
-        secretkey: ''
+        secretkey: '',
+        page: ''
       }
     },
     methods: {

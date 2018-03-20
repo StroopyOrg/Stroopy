@@ -17,25 +17,28 @@
               <h4 class="card-title">Transactions</h4>
             </div>
             <div class="card-body">
-              <div class="table-responsive" v-if="transactions.length > 0">
-                <table class="table">
-                  <thead class=" text-primary">
-                    <tr>
-                      <th>Id</th>
-                      <th>Fee</th>
-                      <th>Operations</th>
-                      <th>Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="(transaction,index) in transactions">
-                      <td><a class="wallet-link" v-bind:href="transaction._links.self.href">{{transaction.id}}</a></td>
-                      <td>{{transaction.fee_paid}}</td>
-                      <td>{{transaction.operation_count}}</td>
-                      <td>{{transaction.created_at}}</td>
-                    </tr>
-                  </tbody>
-                </table>
+              <div v-if="records.length > 0">
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead class=" text-primary">
+                      <tr>
+                        <th>Id</th>
+                        <th>Fee</th>
+                        <th>Operations</th>
+                        <th>Time</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(transaction,index) in records">
+                        <td><a class="wallet-link" v-bind:href="transaction._links.self.href">{{transaction.id}}</a></td>
+                        <td>{{transaction.fee_paid}}</td>
+                        <td>{{transaction.operation_count}}</td>
+                        <td>{{transaction.created_at}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <button v-on:click="loadMore" class="btn btn-block btn-primary btn-round btn-simple">More</button>
               </div>
               <div v-else>No Transactions Found</div>
             </div>
@@ -52,7 +55,8 @@
   export default {
     data () {
       return {
-        transactions: []
+        records: [],
+        page: ''
       }
     },
     components: {
@@ -63,10 +67,10 @@
       this.$nextTick(function () {
         jquery("#transactions_menu").addClass("active");
         
-        this.server.transactions().forAccount(sessionStorage.sourcePublicKey).order("desc").limit(50).call()
-        .then((transactions) => {
-        console.log(transactions.records);
-          this.$set(this.$data, 'transactions', transactions.records );
+        this.server.transactions().forAccount(sessionStorage.sourcePublicKey).order("desc").limit(10).call()
+        .then((page) => {
+          this.$set(this.$data, 'records', page.records );
+          this.$set(this.$data, 'page', page );
         })
         .catch(function(e) {
         });

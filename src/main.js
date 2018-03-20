@@ -18,7 +18,7 @@ import './assets/js/now-ui-kit.js';
 Vue.use(Router);
 
 const routes = [
-  {path: '/', component: App, meta: { title: 'Stroopy | Stellar Wallet For Everyone'}},
+  {path: '/', component: App, meta: { title: 'Stellar Wallet'}},
   {path: '/wallet', redirect: '/wallet/payments'},
   {path: '/wallet/payments', component: Payments, meta: { title: 'Stroopy | Payments'}},
   {path: '/wallet/operations', component: Operations, meta: { title: 'Stroopy | Operations'}},
@@ -55,11 +55,18 @@ Vue.mixin({
       });
     },
     loadPayments: function(){
-      return this.server.payments().forAccount(sessionStorage.sourcePublicKey).limit(50).order('desc').call().then((payments) => {
-        this.$set(this.$data, 'payments', payments.records );
+      return this.server.payments().forAccount(sessionStorage.sourcePublicKey).limit(10).order('desc').call().then((page) => {
+        this.$set(this.$data, 'records', page.records );
+        this.$set(this.$data, 'page', page );
       })
       .catch(function (err) {
         console.log(err);
+      });
+    },
+    loadMore: function(event) {
+      this.page.next().then((page) => {
+        this.$set(this.$data, 'records', this.records.concat(page.records) );
+        this.$set(this.$data, 'page', page );
       });
     }
   },
