@@ -73,10 +73,10 @@ Vue.mixin({
   mounted: function () {
     
     if(ENV == 'development'){
-      var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+      var server = new StellarSdk.Server('https://horizon-testnet.domeno.network');
       StellarSdk.Network.useTestNetwork();
     }else if(ENV == 'production'){
-      var server = new StellarSdk.Server('https://horizon.stellar.org');
+      var server = new StellarSdk.Server('https://horizon.domeno.network');
       StellarSdk.Network.usePublicNetwork();
     }
     
