@@ -14,7 +14,7 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-              <h4 class="card-title">Operations</h4>
+              <h4 class="card-title">การดำเนินการต่างๆ</h4>
             </div>
             <div class="card-body">
               <div v-if="records.length > 0">
@@ -22,13 +22,13 @@
                   <table class="table">
                     <thead class=" text-primary">
                       <tr>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Time</th>
+                        <th>ประเภท</th>
+                        <th>จำนวน</th>
+                        <th>เวลา</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(operation,index) in records">
+                      <tr v-for="(operation,index ) in records" v-bind:key="index">
                         <td><a class="wallet-link" v-bind:href="operation._links.self.href">{{operation.type}}</a></td>
                         <td>{{operation.amount}}</td>
                         <td>{{operation.created_at}}</td>
@@ -36,7 +36,7 @@
                     </tbody>
                   </table>
                 </div>
-                <button v-on:click="loadMore" class="btn btn-block btn-primary btn-round btn-simple">More</button>
+                <button v-on:click="loadMore" class="btn btn-block btn-primary btn-round btn-simple">เพิ่มเติม</button>
               </div>
               <div v-else>No Operations Found</div>
             </div>
