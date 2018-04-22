@@ -1,0 +1,120 @@
+
+.login-page .card-login {
+    max-width:none;
+}
+
+.login-page .card-login .logo-container {
+    margin-bottom: 20px;
+}
+
+.login-page .card-login .input-group:last-child {
+    margin-bottom: 0px;
+}
+
+.page-header[filter-color="blue"] {
+    background: rgba(0, 174, 255);
+    /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(90deg, rgba(0, 174, 255), rgb(0, 174, 255));
+    /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(90deg, rgba(0, 174, 255), rgb(0, 174, 255));
+    /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(90deg, rgba(0, 174, 255), rgb(0, 174, 255));
+    /* For Firefox 3.6 to 15 */
+    background: linear-gradient(0deg, rgba(0, 174, 255), rgb(0, 174, 255));
+    /* Standard syntax */
+}
+
+.sidebar-collapse .navbar-collapse:before {
+    background: #f96332;
+    /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#62cbfc 0%, #000 80%);
+    /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#62cbfc 0%, #000 80%);
+    /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#62cbfc 0%, #000 80%);
+    /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#62cbfc 0%, #000 80%);
+}
+
+.logo-animation{
+    animation-name:levitate;
+    animation-duration:3s;
+    animation-iteration-count:infinite;
+    animation-timing-function:ease-in-out;
+    -webkit-animation-name:levitate;
+    -webkit-animation-duration:3s;
+    -webkit-animation-iteration-count:infinite;
+    -webkit-animation-timing-function:ease-in-out;
+}
+
+@keyframes levitate{
+    50%{transform:rotateZ(-30deg)}
+}
+
+@-webkit-keyframes levitate{
+  50%{-webkit-transform:rotateZ(-30deg)}
+}
+
+sidebar-collapse .navbar .navbar-translate {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  -webkit-justify-content: space-between !important;
+  -webkit-align-items: center;
+}
+
+.bootstrap-collapse .navbar .navbar-translate {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  -webkit-justify-content: space-between !important;
+  -webkit-align-items: center;
+}
+
+.burger-menu .navbar .navbar-translate {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  -webkit-justify-content: space-between !important;
+  -webkit-align-items: center;
+}
+
+.page-header .container>.content-center {
+  position: fixed;
+}
+
+.sidebar-collapse .navbar .navbar-translate {
+        display: -webkit-flex;
+        -webkit-justify-content: space-between !important;
+        -webkit-align-items: center;
+}
+
+.input-group-addon,
+.input-group-btn,
+.input-group .form-control {
+  display: -webkit-flex;
+}
+
+.input-group {
+  display: -webkit-flex;
+}
+
+.input-group .form-control {
+      -webkit-flex: 1 1 auto;
+}
+
+@media screen and (max-width: 991px) {
+  .sidebar-collapse [class*="navbar-expand-"] .navbar-collapse {
+        width: 250px;
+    }
+  .sidebar-collapse #bodyClick {
+        right: 250px;
+  }
+  .nav-open .sidebar-collapse .navbar-translate {
+    -webkit-transform: translate3d(-250px, 0, 0);
+    -moz-transform: translate3d(-250px, 0, 0);
+    -o-transform: translate3d(-250px, 0, 0);
+    -ms-transform: translate3d(-250px, 0, 0);
+    transform: translate3d(-250px, 0, 0);
+  }
+}

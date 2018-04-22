@@ -2,8 +2,8 @@
     <div class="wrapper">
       <div class="sidebar" data-color="orange">
         <div class="logo">
-          <a href="/" class="simple-text logo-mini"><img src="../assets/img/logo.png" alt="S"></a>
-          <a href="/" class="simple-text logo-normal">Stroopy</a>
+          <a href="/" class="simple-text logo-mini"><img src="../assets/img/PNG-03.png" alt="S"></a>
+          <a href="/" class="simple-text logo-normal">DomeCloud</a>
           <div class="navbar-minimize">
             <button id="minimizeSidebar" class="btn btn-simple btn-icon btn-neutral btn-round">
               <i class="now-ui-icons text_align-center visible-on-sidebar-regular"></i>
@@ -16,12 +16,12 @@
             <li>
               <a data-toggle="collapse" href="#assetslist" class="collapsed" aria-expanded="false">
                 <i class="now-ui-icons business_money-coins"></i>
-                <p>My Assets<b class="caret"></b></p>
+                <p>โทเคนทั้งหมด<b class="caret"></b></p>
               </a>
 
               <div class="collapse" id="assetslist">
                 <ul class="nav">
-                  <li v-for="asset in assets">
+                  <li v-for="asset in assets" v-bind:key="asset.key">
                     <a href="#">
                       <span v-if="asset.asset_type === 'native'" class="sidebar-mini-icon">XLM</span>
                       <span v-else class="sidebar-mini-icon">{{ asset.asset_code }}</span>
@@ -35,25 +35,25 @@
             <li id="payments_menu">
               <a href="/wallet/payments">
                 <i class="now-ui-icons business_bank"></i>
-                <p>Payments</p>
+                <p>การบริการ</p>
               </a>
             </li>
             <li id="operations_menu">
               <a href="/wallet/operations">
                 <i class="now-ui-icons ui-2_settings-90"></i>
-                <p>Operations</p>
+                <p>การดำเนินการ</p>
               </a>
             </li>
             <li id="offers_menu">
               <a href="/wallet/offers">
                 <i class="now-ui-icons business_briefcase-24"></i>
-                <p>Offers</p>
+                <p>ข้อเสนอ</p>
               </a>
             </li>
             <li id="transactions_menu">
               <a href="/wallet/transactions">
                 <i class="now-ui-icons loader_refresh"></i>
-                <p>Transactions</p>
+                <p>การทำธุระกรรม</p>
               </a>
             </li>
           </ul>
@@ -71,7 +71,7 @@
 				  <span class="navbar-toggler-bar bar3"></span>
 				</button>
               </div>
-              <a class="navbar-brand" href="#" style="font-weight: 600;">Stroopy</a>
+              <a class="navbar-brand" href="#" style="font-weight: 600;">DomeCloud</a>
             </div>
             
             <button class="navbar-toggler-custom collapsed" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
                     <p><span class="d-lg-none d-md-block">User</span></p>
                   </a>
                   <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-                    <a v-on:click="logout" class="dropdown-item" href="#">Logout</a>
+                    <a v-on:click="logout" class="dropdown-item" href="#">ออกจากระบบ</a>
                   </div>
                 </li>
               </ul>

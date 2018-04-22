@@ -14,7 +14,7 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-              <h4 class="card-title">Offers</h4>
+              <h4 class="card-title">ข้อเสนอ</h4>
             </div>
             <div class="card-body">
               <div v-if="records.length > 0">
@@ -29,7 +29,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(offer,index) in records">
+                      <tr v-for="(offer,index) in records" v-bind:key="index">
                         <td v-if="offer.selling.asset_type === 'native'">XLM</td>
                         <td v-else>{{offer.selling.asset_code}}</td>
                         <td v-if="offer.buying.asset_type === 'native'">XLM</td>
